@@ -44,7 +44,7 @@ async function getWishlist(userId: string) {
 export default async function WishlistPage() {
     const session = await auth();
 
-    if (!session?.user) {
+    if (!session?.user?.id) {
         redirect("/login?callbackUrl=/wishlist");
     }
 
