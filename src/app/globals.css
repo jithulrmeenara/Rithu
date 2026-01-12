@@ -1,0 +1,278 @@
+/* ================================
+   Rithu by AAha - Luxury Jewelry
+   Global Styles & Design Tokens
+   ================================ */
+
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================================
+   CSS CUSTOM PROPERTIES
+   ================================ */
+
+@layer base {
+  :root {
+    /* Luxury Light Color Palette */
+    --bg-primary: #FDFBF7;
+    /* Champagne/Cream */
+    --bg-secondary: #F4F1EA;
+    /* Warm Beige */
+    --text-primary: #1A1A1A;
+    /* Soft Charcoal */
+    --text-secondary: #595959;
+    /* Slate Grey */
+    --accent: #D4AF37;
+    /* Metallic Gold */
+    --accent-light: #E6C35C;
+    --accent-dark: #B8941F;
+
+    /* Shadcn UI Variables */
+    --background: 40 20% 99%;
+    --foreground: 0 0% 10%;
+    --card: 40 20% 99%;
+    --card-foreground: 0 0% 10%;
+    --popover: 40 20% 99%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 45 65% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 12% 95%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 40 12% 95%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 45 65% 52%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 12% 91%;
+    --input: 40 12% 91%;
+    --ring: 45 65% 52%;
+    --radius: 0.5rem;
+
+    /* Chart Colors */
+    --chart-1: 45 65% 52%;
+    --chart-2: 40 12% 75%;
+    --chart-3: 0 0% 35%;
+    --chart-4: 45 80% 65%;
+    --chart-5: 40 20% 85%;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 45 65% 52%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 45 65% 52%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 45 65% 52%;
+    --chart-1: 45 80% 65%;
+    --chart-2: 40 20% 50%;
+    --chart-3: 0 0% 80%;
+    --chart-4: 45 100% 75%;
+    --chart-5: 40 30% 40%;
+  }
+}
+
+/* ================================
+   FONT IMPORTS
+   ================================ */
+
+/* Google Fonts imported at top */
+
+/* Geist Sans (Vercel's font) - Alternative body font */
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('/fonts/GeistVF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ================================
+   BASE STYLES
+   ================================ */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+    font-feature-settings: 'kern' 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-primary-50 text-text-primary font-sans;
+    background-color: var(--bg-primary);
+  }
+
+  /* Typography Defaults */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-semibold text-text-primary;
+  }
+
+  h1 {
+    @apply text-h1;
+  }
+
+  h2 {
+    @apply text-h2;
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  h4 {
+    @apply text-h4;
+  }
+
+  p {
+    @apply text-body text-text-secondary leading-relaxed;
+  }
+
+  a {
+    @apply text-accent transition-colors duration-luxury hover:text-accent-dark;
+  }
+
+  /* Remove default margins */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    @apply mb-0;
+  }
+}
+
+/* ================================
+   COMPONENT UTILITIES
+   ================================ */
+
+@layer components {
+
+  /* Container */
+  .container {
+    @apply max-w-7xl mx-auto px-container;
+  }
+
+  /* Section Spacing */
+  .section {
+    @apply py-section;
+  }
+
+  /* Glassmorphism Effect */
+  .glass {
+    @apply bg-primary-50/80 backdrop-blur-glass border border-primary-200/50;
+  }
+
+  /* Luxury Button */
+  .btn-luxury {
+    @apply inline-flex items-center justify-center px-8 py-4 bg-accent text-white font-medium text-sm uppercase tracking-wider rounded-sm shadow-luxury transition-all duration-luxury hover:bg-accent-dark hover:shadow-luxury-lg hover:scale-105 active:scale-100 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Outlined Luxury Button */
+  .btn-luxury-outline {
+    @apply inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-accent text-accent font-medium text-sm uppercase tracking-wider rounded-sm transition-all duration-luxury hover:bg-accent hover:text-white hover:scale-105 active:scale-100;
+  }
+
+  /* Card with Luxury Shadow */
+  .card-luxury {
+    @apply bg-white rounded-lg shadow-luxury p-6 transition-shadow duration-luxury hover:shadow-luxury-lg;
+  }
+
+  /* Product Image Zoom Effect */
+  .product-image-zoom {
+    @apply overflow-hidden rounded-md;
+  }
+
+  .product-image-zoom img {
+    @apply transition-transform duration-500 ease-luxury hover:scale-105;
+  }
+
+  /* Gradient Text */
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-accent-light via-accent to-accent-dark bg-clip-text text-transparent;
+  }
+
+  /* Divider */
+  .divider-luxury {
+    @apply w-24 h-px bg-gradient-to-r from-transparent via-accent to-transparent mx-auto;
+  }
+}
+
+/* ================================
+   UTILITY EXTENSIONS
+   ================================ */
+
+@layer utilities {
+
+  /* Text Balance (for headings) */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Hide Scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Focus Ring for Accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+  }
+
+  /* Shimmer Effect (for loading states) */
+  .shimmer {
+    background: linear-gradient(90deg,
+        var(--bg-secondary) 0%,
+        var(--bg-primary) 50%,
+        var(--bg-secondary) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+}
+
+/* ================================
+   PRINT STYLES
+   ================================ */
+
+@media print {
+  body {
+    @apply bg-white text-black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

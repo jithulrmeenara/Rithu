@@ -1,0 +1,5 @@
+// Fallback placeholder image for development
+// Using an SVG data URI or simple text
+export default function PlaceholderJewelry() {
+  return null;
+}
