@@ -61,6 +61,10 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
         price: Number(product.price),
         compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
         cost: product.cost ? Number(product.cost) : null,
+        collection: {
+            name: collection.name,
+            slug: collection.slug,
+        },
     }));
 
     return (
