@@ -10,7 +10,24 @@ export const metadata = {
     description: "Your saved jewelry pieces - beautiful items you love.",
 };
 
-async function getWishlist(userId?: string) {
+// Type definition for wishlist items
+type WishlistItem = {
+    id: string;
+    product: {
+        id: string;
+        name: string;
+        slug: string;
+        thumbnail: string | null;
+        price: number;
+        compareAtPrice: number | null;
+        stock: number;
+        category: {
+            name: string;
+        } | null;
+    };
+};
+
+async function getWishlist(userId?: string): Promise<WishlistItem[]> {
     // Mock mode - return empty wishlist
     return [];
 }
