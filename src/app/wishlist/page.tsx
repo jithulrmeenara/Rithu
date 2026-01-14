@@ -1,6 +1,5 @@
-import { auth } from "@/lib/auth";
+// MOCK MODE: Authentication and wishlist disabled for deployment without database
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,44 +10,15 @@ export const metadata = {
     description: "Your saved jewelry pieces - beautiful items you love.",
 };
 
-async function getWishlist(userId: string) {
-    try {
-        const wishlistItems = await db.wishlistItem.findMany({
-            where: { userId },
-            include: {
-                product: {
-                    include: {
-                        category: { select: { name: true, slug: true } },
-                    },
-                },
-            },
-            orderBy: { createdAt: "desc" },
-        });
-
-        // Serialize Decimal fields
-        return wishlistItems.map((item) => ({
-            ...item,
-            product: {
-                ...item.product,
-                price: Number(item.product.price),
-                compareAtPrice: item.product.compareAtPrice ? Number(item.product.compareAtPrice) : null,
-                cost: item.product.cost ? Number(item.product.cost) : null,
-            },
-        }));
-    } catch (error) {
-        console.error("Error fetching wishlist:", error);
-        return [];
-    }
+async function getWishlist(userId?: string) {
+    // Mock mode - return empty wishlist
+    return [];
 }
 
 export default async function WishlistPage() {
-    const session = await auth();
-
-    if (!session?.user?.id) {
-        redirect("/login?callbackUrl=/wishlist");
-    }
-
-    const wishlistItems = await getWishlist(session.user.id);
+    // Mock mode - no authentication, just show empty wishlist
+    // In production with database, this would check auth and redirect
+    const wishlistItems = await getWishlist();
 
     return (
         <div className="min-h-screen bg-white">
