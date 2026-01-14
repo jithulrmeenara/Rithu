@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { getAllCollections, getAllProducts } from "@/lib/mockData";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { ProductCard } from "@/components/products/product-card";
@@ -12,19 +12,30 @@ interface CollectionPageProps {
 
 async function getCollection(slug: string) {
     try {
-        const collection = await db.collection.findUnique({
-            where: { slug },
-            include: {
-                products: {
-                    where: { active: true },
-                    include: {
-                        category: { select: { name: true, slug: true } },
-                    },
-                    orderBy: { createdAt: "desc" },
-                },
-            },
-        });
-        return collection;
+        const collections = getAllCollections();
+        const products = getAllProducts();
+
+        // Find collection by slug (generated from name)
+        const collection = collections.find(
+            c => c.name.toLowerCase().replace(/\s+/g, '-') === slug
+        );
+
+        if (!collection) return null;
+
+        // Return collection with products (using all mock products for now)
+        return {
+            ...collection,
+            slug,
+            image: collection.imageUrl,
+            products: products.map(p => ({
+                ...p,
+                active: true,
+                category: { name: p.category, slug: p.category.toLowerCase() },
+                price: p.price,
+                compareAtPrice: p.originalPrice !== p.price ? p.originalPrice : null,
+                cost: null,
+            }))
+        };
     } catch (error) {
         console.error(`Error fetching collection ${slug}:`, error);
         return null;
