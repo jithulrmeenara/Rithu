@@ -9,79 +9,103 @@ import { ArrowRight, Star, ShieldCheck, Truck, Sparkles, Mail, Check, Crown, Dia
 export default function HomePage() {
     return (
         <div className="min-h-screen bg-white">
-            {/* Hero Section - Exact Match */}
+            {/* Hero Section - Mobile-First Impressive Design */}
             <section className="relative min-h-screen bg-[#FDFBF7]">
+                {/* Mobile Hero Image - Full Width at Top */}
+                <div className="lg:hidden relative h-[60vh] min-h-[500px] w-full">
+                    <Image
+                        src="/hero-modern.png"
+                        alt="Luxury Jewelry Collection"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                    {/* Gradient Overlay for Text Readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-[#FDFBF7]/20 to-transparent" />
+
+                    {/* Floating Stats on Mobile */}
+                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+                        <div className="flex items-center gap-2">
+                            <Star className="w-4 h-4 text-[#D4AF37] fill-[#D4AF37]" />
+                            <div>
+                                <p className="text-lg font-bold text-[#1a4749]">4.9</p>
+                                <p className="text-[8px] text-gray-500">Rating</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="container mx-auto px-6 lg:px-12">
-                    <div className="grid lg:grid-cols-2 gap-16 min-h-screen items-center py-20">
+                    <div className="grid lg:grid-cols-2 gap-16 lg:min-h-screen items-center py-12 lg:py-20">
                         {/* Left Content - Text */}
-                        <div className="space-y-8">
+                        <div className="space-y-6 lg:space-y-8">
                             {/* Badge */}
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 shadow-sm">
                                 <Crown className="w-3 h-3 text-[#D4AF37]" />
                                 <span className="text-[10px] font-semibold text-gray-700 uppercase tracking-[0.2em]">
                                     New Collection 2026
                                 </span>
                             </div>
 
-                            {/* Heading */}
-                            <div className="space-y-2">
-                                <h1 className="font-heading text-7xl lg:text-8xl font-light tracking-tight text-[#1a4749] leading-[1.1]">
+                            {/* Heading - MUCH Bigger on Mobile */}
+                            <div className="space-y-3">
+                                <h1 className="font-heading text-6xl sm:text-7xl lg:text-8xl font-light tracking-tight text-[#1a4749] leading-[1.05]">
                                     Timeless
                                 </h1>
-                                <h1 className="font-heading text-7xl lg:text-8xl font-light italic text-[#D4AF37] leading-[1.1]">
+                                <h1 className="font-heading text-6xl sm:text-7xl lg:text-8xl font-light italic text-[#D4AF37] leading-[1.05]">
                                     Elegance
                                 </h1>
                             </div>
 
                             {/* Subheading */}
-                            <p className="text-lg text-gray-600 font-light">
+                            <p className="text-xl lg:text-lg text-gray-600 font-light">
                                 Crafted for the Modern Connoisseur
                             </p>
 
                             {/* Description */}
-                            <p className="text-sm text-gray-500 leading-relaxed max-w-md">
+                            <p className="text-base lg:text-sm text-gray-500 leading-relaxed max-w-md">
                                 Discover our curated collection of handcrafted jewelry, where traditional artistry meets contemporary design. Each piece tells a unique story of luxury and exclusivity.
                             </p>
 
-                            {/* Buttons */}
-                            <div className="flex gap-4 pt-4">
+                            {/* Buttons - Stack on Mobile */}
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                 <Button
                                     asChild
-                                    className="h-12 px-8 bg-[#1a4749] hover:bg-[#1a4749]/90 text-white text-xs font-semibold uppercase tracking-wider rounded-md"
+                                    className="h-14 sm:h-12 px-8 bg-[#1a4749] hover:bg-[#1a4749]/90 text-white text-sm sm:text-xs font-semibold uppercase tracking-wider rounded-md shadow-lg"
                                 >
                                     <Link href="/shop">
                                         Explore Collection
-                                        <ArrowRight className="ml-2 w-4 h-4" />
+                                        <ArrowRight className="ml-2 w-5 h-5" />
                                     </Link>
                                 </Button>
                                 <Button
                                     asChild
                                     variant="outline"
-                                    className="h-12 px-8 border-[#1a4749] text-[#1a4749] hover:bg-[#1a4749] hover:text-white text-xs font-semibold uppercase tracking-wider rounded-md"
+                                    className="h-14 sm:h-12 px-8 border-2 border-[#1a4749] text-[#1a4749] hover:bg-[#1a4749] hover:text-white text-sm sm:text-xs font-semibold uppercase tracking-wider rounded-md"
                                 >
                                     <Link href="/collections">View Collections</Link>
                                 </Button>
                             </div>
 
-                            {/* Trust Badges */}
-                            <div className="flex items-center gap-8 pt-8">
-                                <div className="flex items-center gap-2">
-                                    <Truck className="w-4 h-4 text-[#D4AF37]" />
+                            {/* Trust Badges - Better Mobile Layout */}
+                            <div className="grid grid-cols-3 lg:flex lg:items-center gap-4 lg:gap-8 pt-6 lg:pt-8">
+                                <div className="flex flex-col lg:flex-row items-center gap-2 text-center lg:text-left">
+                                    <Truck className="w-5 h-5 text-[#D4AF37]" />
                                     <span className="text-xs text-gray-600">Free Shipping</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Star className="w-4 h-4 text-[#D4AF37]" />
+                                <div className="flex flex-col lg:flex-row items-center gap-2 text-center lg:text-left">
+                                    <Star className="w-5 h-5 text-[#D4AF37]" />
                                     <span className="text-xs text-gray-600">Lifetime Warranty</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+                                <div className="flex flex-col lg:flex-row items-center gap-2 text-center lg:text-left">
+                                    <ShieldCheck className="w-5 h-5 text-[#D4AF37]" />
                                     <span className="text-xs text-gray-600">BIS Certified</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Right Content - Image with Floating Cards */}
-                        <div className="relative h-[600px] lg:h-[700px]">
+                        {/* Right Content - Image with Floating Cards (Desktop Only) */}
+                        <div className="relative h-[600px] lg:h-[700px] hidden lg:block">
                             {/* Main Image */}
                             <div className="relative h-full rounded-2xl overflow-hidden shadow-2xl">
                                 <Image
