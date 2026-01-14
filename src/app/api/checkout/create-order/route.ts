@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { razorpay } from "@/lib/razorpay";
 import { type CartItem } from "@/lib/store/cart";
+
+// MOCK MODE: Payment disabled for deployment without database
+// This is a temporary measure for testing/demo purposes
 
 export async function POST(req: Request) {
     try {
@@ -14,24 +16,17 @@ export async function POST(req: Request) {
             return acc + Number(item.product.price) * item.quantity;
         }, 0);
 
-        // Razorpay expects amount in smallest currency unit (paise for INR)
+        // Mock response - no actual payment processing
         const amount = Math.round(total * 100);
 
-        const options = {
+        return NextResponse.json({
+            orderId: `mock_order_${Date.now()}`,
             amount: amount,
             currency: "INR",
-            receipt: `receipt_${Date.now()}`,
-        };
-
-        const order = await razorpay.orders.create(options);
-
-        return NextResponse.json({
-            orderId: order.id,
-            amount: order.amount,
-            currency: order.currency,
+            message: "This is a demo mode. No actual payment will be processed.",
         });
     } catch (error: any) {
-        console.error("Razorpay Order Error:", error);
+        console.error("Order Error:", error);
         return NextResponse.json(
             { error: error.message || "Something went wrong" },
             { status: 500 }

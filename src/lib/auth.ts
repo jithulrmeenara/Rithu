@@ -1,20 +1,8 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { z } from "zod";
-import bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
 
-async function getUser(email: string) {
-    try {
-        const user = await db.user.findUnique({
-            where: { email },
-        });
-        return user;
-    } catch (error) {
-        console.error("Failed to fetch user:", error);
-        throw new Error("Failed to fetch user.");
-    }
-}
+// MOCK MODE: Auth disabled for deployment without database
+// This is a temporary measure for testing/demo purposes
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
     pages: {
@@ -32,32 +20,16 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
             return session;
         },
         async jwt({ token }) {
-            if (!token.sub) return token;
-
-            const user = await getUser(token.email!);
-            if (!user) return token;
-
-            token.role = user.role;
+            // Mock mode - no database lookup
+            token.role = "USER";
             return token;
         },
     },
     providers: [
         Credentials({
             async authorize(credentials) {
-                const parsedCredentials = z
-                    .object({ email: z.string().email(), password: z.string().min(6) })
-                    .safeParse(credentials);
-
-                if (parsedCredentials.success) {
-                    const { email, password } = parsedCredentials.data;
-                    const user = await getUser(email);
-                    if (!user || !user.passwordHash) return null;
-
-                    const passwordsMatch = await bcrypt.compare(password, user.passwordHash);
-                    if (passwordsMatch) return user;
-                }
-
-                console.log("Invalid credentials");
+                // Mock mode - authentication disabled
+                console.log("Auth disabled in mock mode");
                 return null;
             },
         }),
@@ -65,5 +37,5 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     session: {
         strategy: "jwt",
     },
-    secret: process.env.AUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
 });
