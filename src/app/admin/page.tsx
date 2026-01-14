@@ -1,59 +1,34 @@
-import { db } from "@/lib/db";
+// MOCK MODE: Admin dashboard with mock data for deployment without database
 import { StatCard } from "@/components/admin/stat-card";
 import { RevenueChart } from "@/components/admin/revenue-chart";
 import { DollarSign, ShoppingCart, TrendingUp, Package } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 async function getAnalytics() {
-    const [orders, products, revenue] = await Promise.all([
-        // Total orders
-        db.order.count(),
-
-        // Products count and low stock
-        db.product.findMany({
-            where: { active: true },
-            select: { stock: true },
-        }),
-
-        // Revenue calculation
-        db.order.aggregate({
-            where: {
-                paymentStatus: "SUCCEEDED",
-            },
-            _sum: {
-                total: true,
-            },
-        }),
-    ]);
-
-    const lowStockProducts = products.filter(p => p.stock < 10).length;
-    const totalRevenue = Number(revenue._sum.total || 0);
-    const averageOrderValue = orders > 0 ? totalRevenue / orders : 0;
-
+    // Mock analytics data
     return {
-        totalOrders: orders,
-        totalProducts: products.length,
-        lowStockProducts,
-        totalRevenue,
-        averageOrderValue,
+        totalOrders: 0,
+        totalProducts: 6,
+        lowStockProducts: 0,
+        totalRevenue: 0,
+        averageOrderValue: 0,
     };
 }
 
-async function getRecentOrders() {
-    return await db.order.findMany({
-        take: 5,
-        include: {
-            user: {
-                select: {
-                    name: true,
-                    email: true,
-                },
-            },
-        },
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
+type RecentOrder = {
+    id: string;
+    orderNumber: string;
+    total: number;
+    status: string;
+    user: {
+        name: string | null;
+        email: string;
+    };
+};
+
+async function getRecentOrders(): Promise<RecentOrder[]> {
+    // Mock - return empty orders
+    return [];
 }
 
 export default async function AdminDashboard() {
