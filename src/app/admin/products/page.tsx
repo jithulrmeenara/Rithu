@@ -1,4 +1,5 @@
-import { db } from "@/lib/db";
+// MOCK MODE: Admin products page with mock data
+import { getAllProducts } from "@/lib/mockData";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,15 +7,15 @@ import { Plus } from "lucide-react";
 import { ProductsTable } from "@/components/admin/products-table";
 
 async function getProducts() {
-    return await db.product.findMany({
-        include: {
-            category: true,
-            collection: true,
-        },
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
+    const mockProducts = getAllProducts();
+    return mockProducts.map(p => ({
+        ...p,
+        stock: 10,
+        active: true,
+        thumbnail: p.images[0] || null,
+        category: { name: p.category, slug: p.category.toLowerCase() },
+        collection: null,
+    }));
 }
 
 export default async function ProductsPage() {
