@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { getAllCollections } from "@/lib/mockData";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -11,15 +11,12 @@ export const metadata = {
 
 async function getCollections() {
     try {
-        const collections = await db.collection.findMany({
-            include: {
-                _count: {
-                    select: { products: true },
-                },
-            },
-            orderBy: { name: "asc" },
-        });
-        return collections;
+        const collections = getAllCollections();
+        return collections.map(collection => ({
+            ...collection,
+            slug: collection.name.toLowerCase().replace(/\s+/g, '-'),
+            _count: { products: collection.productCount }
+        }));
     } catch (error) {
         console.error("Error fetching collections:", error);
         return [];
@@ -58,9 +55,9 @@ export default async function CollectionsPage() {
                                     className="group"
                                 >
                                     <div className="relative overflow-hidden bg-[#FDFBF7] aspect-[4/5] mb-6">
-                                        {collection.image ? (
+                                        {collection.imageUrl ? (
                                             <Image
-                                                src={collection.image}
+                                                src={collection.imageUrl}
                                                 alt={collection.name}
                                                 fill
                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
