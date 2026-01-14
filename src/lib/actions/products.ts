@@ -1,7 +1,9 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { type Product, Prisma } from "@prisma/client";
+import { getAllProducts, getProductById, getFeaturedProducts as getMockFeaturedProducts } from "@/lib/mockData";
+import { type Product } from "@prisma/client";
+
+// MOCK MODE: Using mock data instead of database for deployment
 
 // Serialized product type for client components (Decimal converted to number)
 export type ProductWithRelations = Omit<Product, 'price' | 'compareAtPrice' | 'cost'> & {
@@ -33,61 +35,76 @@ export async function getProducts({
     minPrice,
     maxPrice,
 }: GetProductsParams = {}) {
-    const skip = (page - 1) * limit;
+    try {
+        let products = getAllProducts();
 
-    const where: Prisma.ProductWhereInput = {
-        active: true,
-        AND: [
-            query
-                ? {
-                    OR: [
-                        { name: { contains: query, mode: "insensitive" } },
-                        { description: { contains: query, mode: "insensitive" } },
-                    ],
-                }
-                : {},
-            category ? { category: { slug: category } } : {},
-            collection ? { collection: { slug: collection } } : {},
-            minPrice ? { price: { gte: minPrice } } : {},
-            maxPrice ? { price: { lte: maxPrice } } : {},
-        ],
-    };
+        // Filter by query
+        if (query) {
+            const lowerQuery = query.toLowerCase();
+            products = products.filter(p =>
+                p.name.toLowerCase().includes(lowerQuery) ||
+                p.description.toLowerCase().includes(lowerQuery)
+            );
+        }
 
-    const orderBy: Prisma.ProductOrderByWithRelationInput = (() => {
+        // Filter by category
+        if (category) {
+            products = products.filter(p => p.category.toLowerCase() === category.toLowerCase());
+        }
+
+        // Filter by price range
+        if (minPrice) {
+            products = products.filter(p => p.price >= minPrice);
+        }
+        if (maxPrice) {
+            products = products.filter(p => p.price <= maxPrice);
+        }
+
+        // Sort
         switch (sort) {
             case "price-asc":
-                return { price: "asc" };
+                products.sort((a, b) => a.price - b.price);
+                break;
             case "price-desc":
-                return { price: "desc" };
+                products.sort((a, b) => b.price - a.price);
+                break;
             case "featured":
-                return { featured: "desc" };
+                products.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+                break;
             case "newest":
             default:
-                return { createdAt: "desc" };
+                products.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+                break;
         }
-    })();
 
-    try {
-        const [products, total] = await Promise.all([
-            db.product.findMany({
-                where,
-                take: limit,
-                skip,
-                orderBy,
-                include: {
-                    category: { select: { name: true, slug: true } },
-                    collection: { select: { name: true, slug: true } },
-                },
-            }),
-            db.product.count({ where }),
-        ]);
+        const total = products.length;
+        const skip = (page - 1) * limit;
+        const paginatedProducts = products.slice(skip, skip + limit);
 
-        // Convert Decimal fields to numbers for client components
-        const serializedProducts = products.map((product) => ({
-            ...product,
-            price: Number(product.price),
-            compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
-            cost: product.cost ? Number(product.cost) : null,
+        // Add required fields
+        const serializedProducts = paginatedProducts.map(p => ({
+            ...p,
+            slug: p.name.toLowerCase().replace(/\s+/g, '-'),
+            shortDescription: p.description,
+            active: true,
+            stock: 10,
+            sku: `SKU-${p.id}`,
+            barcode: null,
+            tags: [],
+            metaTitle: null,
+            metaDescription: null,
+            handle: p.name.toLowerCase().replace(/\s+/g, '-'),
+            categoryId: '1',
+            collectionId: null,
+            category: { name: p.category, slug: p.category.toLowerCase() },
+            collection: null,
+            compareAtPrice: p.originalPrice !== p.price ? p.originalPrice : null,
+            cost: null,
+            trackInventory: false,
+            thumbnail: p.images[0] || null,
+            materials: p.material || null,
+            dimensions: p.weight || null,
+            specifications: null,
         }));
 
         return {
@@ -107,27 +124,30 @@ export async function getProducts({
 
 export async function getProductBySlug(slug: string) {
     try {
-        const product = await db.product.findUnique({
-            where: { slug },
-            include: {
-                category: true,
-                collection: true,
-                reviews: {
-                    include: { user: { select: { name: true, image: true } } },
-                    orderBy: { createdAt: "desc" },
-                    take: 5,
-                },
-            },
-        });
+        const products = getAllProducts();
+        const product = products.find(p => p.name.toLowerCase().replace(/\s+/g, '-') === slug);
 
         if (!product) return null;
 
-        // Convert Decimal fields to numbers
         return {
             ...product,
-            price: Number(product.price),
-            compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
-            cost: product.cost ? Number(product.cost) : null,
+            slug,
+            shortDescription: product.description,
+            active: true,
+            stock: 10,
+            sku: `SKU-${product.id}`,
+            barcode: null,
+            tags: [],
+            metaTitle: null,
+            metaDescription: null,
+            handle: slug,
+            categoryId: '1',
+            collectionId: null,
+            category: { name: product.category, slug: product.category.toLowerCase() },
+            collection: null,
+            compareAtPrice: product.originalPrice !== product.price ? product.originalPrice : null,
+            cost: null,
+            reviews: [],
         };
     } catch (error) {
         console.error(`Error fetching product ${slug}:`, error);
@@ -137,21 +157,31 @@ export async function getProductBySlug(slug: string) {
 
 export async function getFeaturedProducts() {
     try {
-        const products = await db.product.findMany({
-            where: { active: true, featured: true },
-            take: 8,
-            orderBy: { createdAt: "desc" },
-            include: {
-                category: { select: { name: true, slug: true } },
-            },
-        });
+        const products = getMockFeaturedProducts();
 
-        // Convert Decimal fields to numbers
-        const serializedProducts = products.map((product) => ({
-            ...product,
-            price: Number(product.price),
-            compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
-            cost: product.cost ? Number(product.cost) : null,
+        const serializedProducts = products.map(p => ({
+            ...p,
+            slug: p.name.toLowerCase().replace(/\s+/g, '-'),
+            shortDescription: p.description,
+            active: true,
+            stock: 10,
+            sku: `SKU-${p.id}`,
+            barcode: null,
+            tags: [],
+            metaTitle: null,
+            metaDescription: null,
+            handle: p.name.toLowerCase().replace(/\s+/g, '-'),
+            categoryId: '1',
+            collectionId: null,
+            category: { name: p.category, slug: p.category.toLowerCase() },
+            collection: null,
+            compareAtPrice: p.originalPrice !== p.price ? p.originalPrice : null,
+            cost: null,
+            trackInventory: false,
+            thumbnail: p.images[0] || null,
+            materials: p.material || null,
+            dimensions: p.weight || null,
+            specifications: null,
         }));
 
         return serializedProducts as ProductWithRelations[];
