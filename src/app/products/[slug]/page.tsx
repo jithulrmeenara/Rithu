@@ -63,11 +63,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {/* Product Details */}
                 <div className="flex flex-col">
                     <div>
-                        {product.collection && (
-                            <Link href={`/collections/${product.collection.slug}`} className="mb-2 inline-block text-sm font-medium text-accent hover:underline">
-                                {product.collection.name}
+                        {/* Collection link disabled in mock mode */}
+                        {/* {product.collection && (
+                            <Link href={`/collections/${product.collection?.slug || ''}`} className="mb-2 inline-block text-sm font-medium text-accent hover:underline">
+                                {product.collection?.name}
                             </Link>
-                        )}
+                        )} */}
                         <h1 className="font-heading text-4xl font-bold text-text-primary">{product.name}</h1>
 
                         <div className="mt-4 flex items-center gap-4">
