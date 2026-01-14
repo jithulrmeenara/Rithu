@@ -29,11 +29,26 @@ async function getCollection(slug: string) {
             image: collection.imageUrl,
             products: products.map(p => ({
                 ...p,
+                slug: p.name.toLowerCase().replace(/\s+/g, '-'),
+                shortDescription: p.description,
                 active: true,
+                stock: 10,
+                sku: `SKU-${p.id}`,
+                barcode: null,
+                tags: [],
+                metaTitle: null,
+                metaDescription: null,
+                handle: p.name.toLowerCase().replace(/\s+/g, '-'),
+                categoryId: '1',
+                collectionId: collection.id,
                 category: { name: p.category, slug: p.category.toLowerCase() },
-                price: p.price,
                 compareAtPrice: p.originalPrice !== p.price ? p.originalPrice : null,
                 cost: null,
+                trackInventory: false,
+                thumbnail: p.images[0] || null,
+                materials: p.material || null,
+                dimensions: p.weight || null,
+                specifications: null,
             }))
         };
     } catch (error) {
